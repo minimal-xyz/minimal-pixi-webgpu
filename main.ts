@@ -8,6 +8,7 @@ let main = async () => {
     // make sure to use the WebGPU renderer
     preference: "webgpu",
   });
+  globalThis.__PIXI_APP__ = app;
 
   document.body.appendChild(app.canvas);
 
