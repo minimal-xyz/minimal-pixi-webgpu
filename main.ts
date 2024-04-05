@@ -5,6 +5,7 @@ let main = async () => {
   const app = new Application();
   await app.init({
     resizeTo: window,
+    // make sure to use the WebGPU renderer
     preference: "webgpu",
   });
 
@@ -12,36 +13,47 @@ let main = async () => {
 
   const geometry = new Geometry({
     attributes: {
+      // 4 points in 2D
       aPosition: [-400, -400, 400, -400, 400, 400, -400, 400],
+      // 4 points in 2D, specifying the UV coordinates
       aUvs: [-1, -1, 1, -1, 1, 1, -1, 1],
     },
+    // 2 triangles from aPosition
     indexBuffer: [0, 1, 2, 0, 2, 3],
   });
 
   const gpu = {
     vertex: {
+      // vertex function name in the shader
       entryPoint: "vert_main",
       source: fractalShader,
     },
     fragment: {
+      // fragment function name in the shader
       entryPoint: "frag_main",
       source: fractalShader,
     },
   };
 
   const shader = Shader.from({
+    // empty for WebGL
     gl: undefined,
     gpu,
   });
 
-  const triangle = new Mesh({
+  const mesh = new Mesh({
     geometry,
     shader,
   });
 
-  triangle.position.set(400, 300);
+  mesh.position.set(window.innerWidth / 2, window.innerHeight / 2);
 
-  app.stage.addChild(triangle);
+  window.addEventListener("resize", () => {
+    app.renderer.resize(window.innerWidth, window.innerHeight);
+    mesh.position.set(window.innerWidth / 2, window.innerHeight / 2);
+  });
+
+  app.stage.addChild(mesh);
 };
 
 window.onload = main;

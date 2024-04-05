@@ -1,3 +1,5 @@
+
+// PIXI builtin uniforms
 struct GlobalUniforms {
   projectionMatrix: mat3x3<f32>,
   worldTransformMatrix: mat3x3<f32>,
@@ -5,6 +7,7 @@ struct GlobalUniforms {
   uResolution: vec2<f32>,
 }
 
+// PIXI builtin uniforms
 struct LocalUniforms {
   uTransformMatrix: mat3x3<f32>,
  uColor: vec4<f32>,
@@ -15,6 +18,7 @@ struct LocalUniforms {
 @group(1) @binding(0) var<uniform> localUniforms : LocalUniforms;
 
 struct VertexOutput {
+  // position is necessary for rendering
   @builtin(position) position: vec4<f32>,
   @location(1) aUvs: vec2<f32>,
 }
@@ -30,6 +34,7 @@ fn vert_main(
   return VertexOutput(screen_position, aUvs);
 }
 
+// complex multiplication
 fn cmpxmul(a: vec2<f32>, b: vec2<f32>) -> vec2<f32> {
   return vec2<f32>(a.x * b.x - a.y * b.y, a.x * b.y + a.y * b.x);
 }
@@ -38,10 +43,14 @@ fn cmpxmul(a: vec2<f32>, b: vec2<f32>) -> vec2<f32> {
 fn frag_main(input: VertexOutput) -> @location(0) vec4<f32> {
 
   let uv = input.aUvs;
+
+  // params are static for now
   let base = vec2<f32>(0.0, 0.0);
   let zoom = 1.0;
   let offset_x = 0.14;
   let offset_y = 0.6;
+
+  // computing fractal here
 
   var z = uv - base * 0.4 / zoom;
   var escaped = false;
